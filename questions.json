@@ -1,0 +1,362 @@
+[
+ {
+  "answer_key": "点击图标→AMS startActivity→Zygote fork 新进程→ActivityThread.main→bindApplication→handleLaunchActivity→performTraversals 绘制首帧。",
+  "date": "2026-09-28",
+  "question": "Activity 冷启动全流程：从点击图标到首帧绘制，AMS、Zygote、ActivityThread 分别做了什么？",
+  "topic": "Framework·Activity"
+ },
+ {
+  "answer_key": "接收方进程通过 mmap 把一块物理内存同时映射到内核和用户空间，驱动只需一次拷贝，传统 IPC 需要内核→用户两次拷贝。",
+  "date": "2026-09-28",
+  "question": "Binder 一次拷贝原理：为什么说 Binder 比传统 IPC 少一次拷贝？mmap 在其中起了什么作用？",
+  "topic": "Framework·Binder"
+ },
+ {
+  "answer_key": "Choreographer 在用；同步屏障让异步消息（Vsync 绘制信号）插队优先执行，保证绘制不被普通消息堵住。",
+  "date": "2026-09-28",
+  "question": "Handler 同步屏障机制：postSyncBarrier 是谁在用？为什么 View 绘制需要它？",
+  "topic": "Framework·Handler"
+ },
+ {
+  "answer_key": "Vsync 到来时若上一帧编舞未完成则跳过本次，避免任务堆积；triple buffer 让 CPU/GPU/显示各持一帧，减少相互等待。",
+  "date": "2026-09-28",
+  "question": "Choreographer 的 Vsync 调度：掉帧时，编舞者如何决定跳过哪一帧？triple buffer 在这里的作用？",
+  "topic": "Framework·绘制"
+ },
+ {
+  "answer_key": "requestLayout 触发 measure+layout，invalidate 只触发 draw；布局变化后内容必然要重绘，所以 requestLayout 连带置脏 draw。",
+  "date": "2026-09-28",
+  "question": "ViewRootImpl.performTraversals：measure/layout/draw 三次遍历的触发条件分别是什么？requestLayout 为什么会连带 requestDraw？",
+  "topic": "Framework·绘制"
+ },
+ {
+  "answer_key": "apply 把写盘丢进 QueuedWork 队列，Activity pause/stop 时 waitToFinish 会阻塞主线程等写完，数据量大即 ANR。",
+  "date": "2026-09-28",
+  "question": "SharedPreferences 的 apply() 为什么可能导致 ANR？QueuedWork 在 Activity 生命周期里做了什么？",
+  "topic": "性能·启动"
+ },
+ {
+  "answer_key": "ActivityThread handleBindApplication 时 attachInfo 安装，早于 onCreate；每个进程独立安装一次。",
+  "date": "2026-09-28",
+  "question": "ContentProvider 的安装时机：为什么它比 Application.onCreate 还早？多进程下会安装几次？",
+  "topic": "Framework·组件"
+ },
+ {
+  "answer_key": "分发 input 事件后等应用 ack 超时即 ANR：5s 输入事件，10s 广播，20s Service（前台）。",
+  "date": "2026-09-28",
+  "question": "ANR 的触发机制：InputDispatcher 如何判定应用无响应？5 秒/10 秒阈值分别对应什么场景？",
+  "topic": "Framework·Input"
+ },
+ {
+  "answer_key": "配置变更时旧 Activity 的 ViewModelStore 经 NonConfigurationInstances 传给新实例，ViewModel 本体根本没死。",
+  "date": "2026-09-28",
+  "question": "ViewModel 为什么能在屏幕旋转后存活？ViewModelStore 经 NonConfigurationInstances 交接的完整时序。",
+  "topic": "Jetpack·ViewModel"
+ },
+ {
+  "answer_key": "finish() 会调；配置变更不调；进程死亡整个进程都没了也不调，靠 SavedState 恢复。",
+  "date": "2026-09-28",
+  "question": "onCleared() 真正的触发点：finish()、进程死亡、配置变更三种场景下分别会不会调？",
+  "topic": "Jetpack·ViewModel"
+ },
+ {
+  "answer_key": "Dispatchers.Main 基于 Handler(Looper.getMainLooper()) 实现；delay 用 postDelayed 实现，只挂起协程不阻塞线程。",
+  "date": "2026-09-28",
+  "question": "协程 Dispatchers.Main 的实现：Android 主线程调度器和 Handler 是什么关系？delay() 为什么不阻塞线程？",
+  "topic": "Kotlin·协程"
+ },
+ {
+  "answer_key": "buffer 缓存继续发，conflate 只留最新，collectLatest 取消旧收集；多路并发或回调转 Flow 用 channelFlow。",
+  "date": "2026-09-28",
+  "question": "Flow 的背压处理：buffer/conflate/collectLatest 各自丢数据的语义是什么？什么场景用 channelFlow？",
+  "topic": "Kotlin·Flow"
+ },
+ {
+  "answer_key": "状态读取点决定重组作用域，下沉缩小范围；skippable 要求参数稳定（stable/equals 不变）。",
+  "date": "2026-09-28",
+  "question": "Compose 重组作用域：为什么把状态读操作下沉到最小可组合项能减少重组范围？skippable 的判定条件？",
+  "topic": "Jetpack·Compose"
+ },
+ {
+  "answer_key": "derivedStateOf 缓存派生结果，只有依赖变化才重算，避免每次重组都重复计算。",
+  "date": "2026-09-28",
+  "question": "remember 与 derivedStateOf：高频变化的状态派生计算，为什么必须用 derivedStateOf 而不是直接计算？",
+  "topic": "Jetpack·Compose"
+ },
+ {
+  "answer_key": "PathClassLoader 只能加载已安装 APK 的 dex，DexClassLoader 可加载任意路径；热修复让补丁 dex 排前面优先命中。",
+  "date": "2026-09-28",
+  "question": "ClassLoader 双亲委派：PathClassLoader 和 DexClassLoader 的区别？热修复为什么要插桩 ClassLoader？",
+  "topic": "Framework·类加载"
+ },
+ {
+  "answer_key": "CC 减少停顿、解决内存碎片；根枚举、引用更新等阶段仍需短暂 STW。",
+  "date": "2026-09-28",
+  "question": "ART 的 GC：CMS 到 Concurrent Copying 的演进解决了什么问题？为什么 ART 仍然会有 GC 停顿？",
+  "topic": "性能·内存"
+ },
+ {
+  "answer_key": "inBitmap 要求复用块尺寸/配置兼容且不小于新图；Ashmem 像素在 native 堆，8.0 前在 Java 堆。",
+  "date": "2026-09-28",
+  "question": "Bitmap 内存优化：inBitmap 复用的约束条件是什么？Ashmem 与 Java 堆 Bitmap 的区别？",
+  "topic": "性能·内存"
+ },
+ {
+  "answer_key": "对观察对象包弱引用，GC 后 ReferenceQueue 没收到引用即泄漏；弱引用+队列是对象已死的可靠信号。",
+  "date": "2026-09-28",
+  "question": "LeakCanary 检测原理：如何判定一个对象泄漏？为什么用弱引用 + ReferenceQueue？",
+  "topic": "性能·内存"
+ },
+ {
+  "answer_key": "Cloud Profiles 首次启动后下发，本地基线随 APK 预置安装即生效；指导 dex2oat 做 AOT，热点方法走编译代码。",
+  "date": "2026-09-28",
+  "question": "Baseline Profiles 与启动优化：Cloud Profiles 和本地基线 profile 分别在什么时候生效？对 dex2oat 的影响？",
+  "topic": "性能·启动"
+ },
+ {
+  "answer_key": "每个 Provider 都在启动主线程串行初始化；治理：合并、懒加载、用 App Startup 统一调度。",
+  "date": "2026-09-28",
+  "question": "App Startup 与 ContentProvider 滥用：为什么说每个 SDK 都塞一个 ContentProvider 是启动杀手？如何治理？",
+  "topic": "性能·启动"
+ },
+ {
+  "answer_key": "z-order 由窗口类型加层级范围决定；Token 标识窗口归属用于权限校验；WMS 管策略（布局/焦点/动画），SF 只管合成显示。",
+  "date": "2026-09-29",
+  "question": "WMS 窗口管理：Application Window / Sub Window / System Window 三类窗口的层级（z-order）如何决定？Window Token 的作用是什么？WMS 与 SurfaceFlinger 的分工边界在哪？",
+  "topic": "Framework·WMS"
+ },
+ {
+  "answer_key": "binder 驱动维护死亡通知链表，服务端 binder 引用归零时驱动回调客户端，触发 DeathRecipient。",
+  "date": "2026-09-29",
+  "question": "Binder 死亡通知：linkToDeath 的底层原理是什么？服务端进程 crash 后，客户端的 BpBinder 如何感知并回调？",
+  "topic": "Framework·Binder"
+ },
+ {
+  "answer_key": "针对单次事务 Parcel 大小（mmap 缓冲区约 1MB）；Intent 跨进程走 Binder，大图超限直接抛异常。",
+  "date": "2026-09-29",
+  "question": "TransactionTooLargeException：Binder 事务为什么有 1MB 限制？这个限制是针对单次事务还是 Binder 缓冲区总量？Intent 传大图为什么会崩？",
+  "topic": "Framework·Binder"
+ },
+ {
+  "answer_key": "都在 system_server 的 InputManager 线程：Reader 读事件，Dispatcher 分发；InputChannel 用 socketpair 跨进程，应用端 ViewRootImpl 接收后走 View 树分发。",
+  "date": "2026-09-29",
+  "question": "Input 事件链：InputReader 与 InputDispatcher 各自跑在什么线程、分别负责什么？InputChannel 的 socketpair 如何把事件送到应用进程的 ViewRootImpl？",
+  "topic": "Framework·Input"
+ },
+ {
+  "answer_key": "next() 用 epoll 阻塞；队列空闲时回调；启动关键路径走完、主线程空转时执行，不阻塞首帧。",
+  "date": "2026-09-29",
+  "question": "IdleHandler 机制：MessageQueue.next() 在没有消息时如何阻塞？IdleHandler 的回调触发条件是什么？为什么它适合做启动后的延迟初始化？",
+  "topic": "Framework·Handler"
+ },
+ {
+  "answer_key": "编译器把 suspend 函数改写成带 Continuation 参数的状态机，挂起点按 label 切分，恢复时按 label 跳回继续执行。",
+  "date": "2026-09-29",
+  "question": "suspend 函数编译原理：Kotlin 编译器对 suspend 函数做了什么变换（CPS）？Continuation 与 label 状态机如何实现挂起与恢复？",
+  "topic": "Kotlin·协程"
+ },
+ {
+  "answer_key": "cancel 只置标志位不强杀线程，挂起点检查标志抛 CancellationException；ensureActive/yield 是显式协作检查点；父 Job 取消向下传播。",
+  "date": "2026-09-29",
+  "question": "协程取消的本质：为什么说 cancel() 是协作式的？Job 的层级取消如何传播？ensureActive()/yield() 在其中扮演什么角色？",
+  "topic": "Kotlin·协程"
+ },
+ {
+  "answer_key": "内联把实参类型直接展开进调用处字节码，T 变具体；noinline 阻止某 lambda 内联，crossinline 禁止内联 lambda 非局部返回。",
+  "date": "2026-09-29",
+  "question": "reified 的真相：内联函数如何绕过类型擦除让 T 具体化？noinline / crossinline 各自解决了内联的什么限制？",
+  "topic": "Kotlin·语言"
+ },
+ {
+  "answer_key": "Rendezvous 零缓冲必须等接收者；Buffered 满才挂起；Conflated 只留最新；Unlimited 永不挂起；默认保证发送即被消费的同步语义。",
+  "date": "2026-09-29",
+  "question": "Channel 的缓冲语义：Rendezvous / Buffered / Conflated / Unlimited 四种容量下 send() 的挂起行为有何不同？为什么 Channel 默认为 Rendezvous？",
+  "topic": "Kotlin·Flow"
+ },
+ {
+  "answer_key": "系统回调 onSaveInstanceState 存 Bundle；SavedStateRegistry 统一收拢各组件 saved state；重建时 SavedStateHandle 从 Bundle 恢复。",
+  "date": "2026-09-29",
+  "question": "SavedStateHandle 恢复链路：进程被系统杀死后，ViewModel 的 SavedStateHandle 数据如何恢复？SavedStateRegistry 与 onSaveInstanceState Bundle 在其中分别做了什么？",
+  "topic": "Jetpack·ViewModel"
+ },
+ {
+  "answer_key": "写状态使当前全局快照失效，标记读取该状态的可组合项待重组；隔离快照用于事务性批量修改；多线程写需在快照内否则抛异常。",
+  "date": "2026-09-29",
+  "question": "Compose Snapshot 系统：mutableStateOf 的写操作如何触发重组？全局快照与隔离快照是什么？多线程写状态会怎样？",
+  "topic": "Jetpack·Compose"
+ },
+ {
+  "answer_key": "压的是事务操作记录（BackStackRecord）不是 Fragment 本身；pop 逆向执行操作，视图销毁重建、实例保留。",
+  "date": "2026-09-29",
+  "question": "Fragment 回退栈：FragmentTransaction.addToBackStack() 压的是什么？popBackStack 时 Fragment 的视图与实例分别经历什么？onSaveInstanceState 在其中何时调用？",
+  "topic": "Jetpack·Fragment"
+ },
+ {
+  "answer_key": "FrameMetrics 看各阶段耗时定位掉帧帧；Systrace/Perfetto 区分主线程方法耗时、measure/layout 过重、RenderThread/GPU 负载。",
+  "date": "2026-09-29",
+  "question": "卡顿归因：FrameMetrics / Choreographer.FrameCallback 如何定位掉帧？如何区分是主线程耗时、布局过重还是 GPU 负载导致的卡顿？",
+  "topic": "性能·卡顿"
+ },
+ {
+  "answer_key": "按需下发模块/ABI/语言 split APK；R8 全模式做更激进的代码优化，shrinkResources 删未引用资源；ABI 分包减体积但增加包管理复杂度。",
+  "date": "2026-09-29",
+  "question": "包体积优化：App Bundle 的 Dynamic Delivery 原理是什么？R8 全模式与 shrinkResources 分别裁什么？按 ABI 分包的收益与代价？",
+  "topic": "性能·包体积"
+ },
+ {
+  "answer_key": "进程创建（dex 加载）、Application（SDK 初始化）、首帧（布局绘制）；非首屏必需一律延后，IO 放线程池，权衡首帧与功能可用延迟。",
+  "date": "2026-09-29",
+  "question": "启动耗时归因：冷启动的三个阶段（进程创建 / Application / 首帧）各自耗时大头在哪？延迟初始化、异步预加载、懒加载 Fragment 如何取舍？",
+  "topic": "性能·启动"
+ },
+ {
+  "answer_key": "untrusted_app 等 domain；neverallow 是编译期硬性禁令；看 avc 日志的 scontext/tcontext/tclass 判断缺策略还是真越权。",
+  "date": "2026-09-29",
+  "question": "SELinux 强制模式：enforcing 下应用进程运行在什么 domain？sepolicy 的 neverallow 规则起什么作用？出现 avc denied 如何排查是策略缺失还是真越权？",
+  "topic": "AOSP·安全"
+ },
+ {
+  "answer_key": "HAL 接口版本化稳定，system 可独立升级；VNDK 冻结 vendor 可用的系统库版本，避免 system 库升级炸掉 vendor 二进制。",
+  "date": "2026-09-29",
+  "question": "Project Treble：HIDL / AIDL stable 把 HAL 接口稳定化后，system 分区与 vendor 分区如何解耦？VNDK 解决了什么问题？",
+  "topic": "AOSP·系统"
+ },
+ {
+  "answer_key": "后台流式写 B 槽分区，postinstall 做 dexopt 等收尾；重启前标记，启动失败 bootloader 切回 A 槽。",
+  "date": "2026-09-29",
+  "question": "A/B 无缝更新：OTA 时 update_engine 如何在后台往 B 槽写数据？postinstall 脚本的作用？更新失败回滚的机制是什么？",
+  "topic": "AOSP·系统"
+ },
+ {
+  "answer_key": "前者缓存配置阶段的 task 图，后者缓存 task 输出；KSP 直接处理 Kotlin 符号，KAPT 要先生成 Java stub 再走 APT，多一轮。",
+  "date": "2026-09-29",
+  "question": "Gradle 构建加速：Configuration Cache 与 Build Cache 缓存的分别是什么？KSP 相对 KAPT 为什么更快（符号处理 vs 生成 Java stub）？",
+  "topic": "构建·Gradle"
+ },
+ {
+  "answer_key": "对 APK 全字节分段摘要并签名；v1 只签 META-INF 内文件，可追加未签名内容，v2 任何字节改动都验签失败。",
+  "date": "2026-09-29",
+  "question": "APK Signature Scheme v2：v2 的 whole-file 签名原理是什么？相比 v1（META-INF 逐文件签名）防住了哪类篡改？为什么 v2 签名后不能再改 APK 任何字节？",
+  "topic": "安全·签名"
+ },
+ {
+  "answer_key": "HWC 能力范围内的图层走硬件 overlay 直通显示，超出能力或有复杂变换的回退 GPU 合成；卡 Vsync 让合成完成正好赶上下一帧显示，避免撕裂与空等。",
+  "date": "2026-09-30",
+  "question": "SurfaceFlinger 的合成流水线里，HWC 硬件合成与 GPU 合成的决策条件是什么？合成时机为什么要卡 Vsync 信号？",
+  "topic": "Framework·SurfaceFlinger"
+ },
+ {
+  "answer_key": "15 是 binder 驱动约定的默认上限（可调），线程经 ioctl 进入 looper 阻塞在驱动等待事务；耗尽后新的同步 Binder 调用排队阻塞，表现为跨进程调用卡顿甚至 ANR。",
+  "date": "2026-09-30",
+  "question": "每个应用进程的 Binder 线程池默认为什么是 15 个？BC_ENTER_LOOPER 注册的线程在空闲时如何等待新事务？线程池耗尽时调用方会看到什么现象？",
+  "topic": "Framework·Binder线程池"
+ },
+ {
+  "answer_key": "AMS 以 pause 完成回调为启动新 Activity 的前置条件，保证同一时刻只有一个 resumed Activity；旧 Activity 的 onPause 做耗时操作会阻塞整个启动链路并触发前台 ANR。",
+  "date": "2026-09-30",
+  "question": "为什么新 Activity 的 onResume 必须等旧 Activity 的 onPause 执行返回后才会被调用？这个时序约束在什么情况下会直接导致 ANR？",
+  "topic": "Framework·Activity时序"
+ },
+ {
+  "answer_key": "每次隐式广播都要唤醒所有注册进程做匹配，耗电且慢；AMS 在 intent 解析阶段直接过滤 manifest 静态注册的隐式接收器；替代为显式广播、JobScheduler 定时任务、FCM 推送。",
+  "date": "2026-09-30",
+  "question": "Android 8 为什么限制隐式广播的静态注册接收？限制的底层实现点在哪？官方推荐的替代方案各对应什么场景？",
+  "topic": "Framework·隐式广播"
+ },
+ {
+  "answer_key": "Doze 下普通 alarm 被批量推迟到维护窗口、Job 被挂起、网络被切断；高优先级 FCM 由系统 GMS 进程代收并允许短暂唤醒应用，属于系统级白名单通道。",
+  "date": "2026-09-30",
+  "question": "Doze 深度休眠下，AlarmManager 的 setExact、JobScheduler 任务、后台网络请求分别受到什么限制？高优先级 FCM 消息为什么能穿透 Doze？",
+  "topic": "Framework·Doze"
+ },
+ {
+  "answer_key": "小对象快速填满新生代触发频繁 GC，GC 停顿抢占主线程时间片造成掉帧；录制一段分配轨迹按分配次数/大小排序，直接定位到循环内 new 的热点代码。",
+  "date": "2026-09-30",
+  "question": "频繁创建销毁小对象（内存抖动）为什么会导致 GC 频繁进而掉帧？如何用 Android Studio 的 Allocation Tracking 定位到具体的分配热点？",
+  "topic": "性能·内存抖动"
+ },
+ {
+  "answer_key": "Chromium 内核自带渲染/JS 引擎常驻内存数十 MB；独立进程可被系统单独回收、崩溃不连累主进程，代价是跨进程通信与冷启更慢；预加载池要注意初始化时机与及时销毁，避免常驻泄漏。",
+  "date": "2026-09-30",
+  "question": "WebView 为什么是内存大户？把 WebView 放到独立进程的收益和代价各是什么？WebView 池预加载方案要注意什么？",
+  "topic": "性能·WebView"
+ },
+ {
+  "answer_key": "安装/OTA 时全量 speed 编译最慢但运行最快，verify 只校验最快但全解释执行，speed-profile 按基线 profile 只编译热点是默认折中；云端 profile 下发后后台重编译升级为 speed。",
+  "date": "2026-09-30",
+  "question": "dex2oat 的 speed、speed-profile、verify 三种编译模式分别在什么时机触发？它们在安装耗时、空间占用和运行性能之间如何取舍？",
+  "topic": "性能·dex2oat"
+ },
+ {
+  "answer_key": "so 常占包体积大头，动态下发让首包只带必需 ABI/必需库，用时再拉取；ReLinker 解决系统 loadLibrary 在部分机型 so 损坏或 ABI 选错时加载失败无重试的问题。",
+  "date": "2026-09-30",
+  "question": "除了 strip 符号表和按 ABI 分包，为什么把 so 做成动态下发能显著降低首包体积？ReLinker 库解决的是原生库加载的什么坑？",
+  "topic": "性能·So体积"
+ },
+ {
+  "answer_key": "StateFlow 内部持有最新值槽位，新订阅者立即拿到当前值（粘性）；SharedFlow 无初值广播，replay 缓存最近 N 个事件让晚订阅者也能拿到历史事件，避免冷启动订阅丢失。",
+  "date": "2026-09-30",
+  "question": "StateFlow 与 SharedFlow 在实现上有何本质区别？为什么说 StateFlow 自带 conflated 语义且总是有值？SharedFlow 的 replay 缓存解决的是什么订阅丢失问题？",
+  "topic": "Kotlin·热流"
+ },
+ {
+  "answer_key": "coroutineScope 任一子协程异常会取消整个作用域并向上传播，supervisorScope 下子协程异常互不影响；SupervisorJob 重写 childCancelled 直接返回 true，把异常吞掉不向上传播。",
+  "date": "2026-09-30",
+  "question": "coroutineScope 与 supervisorScope 在子协程异常传播上有何本质区别？SupervisorJob 在源码层面是如何拦截取消向上传播的？",
+  "topic": "Kotlin·协程作用域"
+ },
+ {
+  "answer_key": "SYNCHRONIZED 双重检查加锁保证只初始化一次，PUBLICATION 允许多线程各算一次但只采用一个结果，NONE 无任何同步；主线程单线程访问加锁是纯开销，NONE 省掉同步成本。",
+  "date": "2026-09-30",
+  "question": "by lazy 的 SYNCHRONIZED、PUBLICATION、NONE 三种线程安全模式实现上有何差异？为什么 UI 线程的惰性属性推荐用 LazyThreadSafetyMode.NONE？",
+  "topic": "Kotlin·委托"
+ },
+ {
+  "answer_key": "内联类在 JVM 上直接擦除为被包装的基础类型，无额外对象头与堆分配；用作泛型实参、nullable 类型或接口实现时会被装箱成真实对象，优势消失。",
+  "date": "2026-09-30",
+  "question": "value class 相对普通 data class 在内存布局上有何优势？在什么情况下编译器会把它装箱回退成包装对象？",
+  "topic": "Kotlin·内联类"
+ },
+ {
+  "answer_key": "Migration 用 ALTER TABLE 保留用户数据，destructive 会删表重建丢数据；AutoMigration 能处理增删列/表，处理不了列重命名、类型变更等需要数据迁移的复杂变更。",
+  "date": "2026-09-30",
+  "question": "Room 升级数据库为什么必须手写 Migration，而 fallbackToDestructiveMigration 被视为危险操作？AutoMigration 能自动处理哪些变更、处理不了哪些？",
+  "topic": "Jetpack·Room"
+ },
+ {
+  "answer_key": "WorkManager 把约束翻译给 JobScheduler，由系统在满足约束的维护窗口统一调度，Doze 下只是推迟不会丢失；一次性任务执行完即结束，周期任务按 interval 重复入队且有 flex 窗口。",
+  "date": "2026-09-30",
+  "question": "WorkManager 的约束任务在 Doze 下如何保证最终执行？底层走 JobScheduler 时，一次性任务与周期性任务在调度语义上有何差异？",
+  "topic": "Jetpack·WorkManager"
+ },
+ {
+  "answer_key": "解决了 SP 主线程同步读写 ANR、apply 异步丢数据、无类型安全与无 Flow 支持；Proto DataStore 全量序列化写入临时文件再原子 rename，保证写入要么全有要么全无。",
+  "date": "2026-09-30",
+  "question": "DataStore 相对 SharedPreferences 解决了什么根本性问题？Proto DataStore 的事务性写入与序列化机制如何保证不断电丢数据？",
+  "topic": "Jetpack·DataStore"
+ },
+ {
+  "answer_key": "Hilt 用注解处理器自动生成 Component 层级与入口点，省掉手写 Module/Component 装配；ActivityRetainedComponent 挂在 ViewModelStore 级别，随配置变更保留、Activity 真正销毁时才释放。",
+  "date": "2026-09-30",
+  "question": "Hilt 相对手写 Dagger Component 省掉了哪些编译期样板工作？@InstallIn 绑定的组件层级中，ActivityRetainedComponent 的存活范围为什么正好是配置变更？",
+  "topic": "Jetpack·Hilt"
+ },
+ {
+  "answer_key": "PMS 解析 Manifest 注册四大组件、创建 data 目录并打 SELinux 标签、调用 installd 做 dexopt；预编译把 dex 转成 oat 让首次启动不用解释执行，避免首启过慢。",
+  "date": "2026-09-30",
+  "question": "APK 安装时 PMS 的完整链路是什么（解析 Manifest、dexopt、建 data 目录、SELinux 打标）？为什么安装阶段就要做一次 dex2oat 预编译？",
+  "topic": "AOSP·PMS"
+ },
+ {
+  "answer_key": "LMKD 按 oom_adj_score 从高到低杀，分数由进程状态决定：前台 Activity 最低，有前台 Service 次之，可见非前台再次之，无 activity 的后台最高、最先被杀。",
+  "date": "2026-09-30",
+  "question": "LMKD 杀进程的依据是什么？oom_adj_score 的几个关键分档（FOREGROUND_APP / VISIBLE_APP / PERCEPTIBLE_APP / CACHED_APP）分别对应应用的什么状态？",
+  "topic": "AOSP·进程优先级"
+ },
+ {
+  "answer_key": "私钥材料只在 TEE 内生成和使用，应用只能拿到操作句柄；Attestation 用设备出厂证书链证明密钥确在硬件内生成；Root 后 TEE 本身仍隔离可信，但应用层调用链可能被劫持，信任降级。",
+  "date": "2026-09-30",
+  "question": "Android Keystore 的密钥为什么出不了 TEE/StrongBox？Key Attestation（密钥认证）证明的是什么？设备被 Root 后 Keystore 还可信吗？",
+  "topic": "安全·Keystore"
+ }
+]
